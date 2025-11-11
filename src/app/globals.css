@@ -1,26 +1,286 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a0a;
+  --foreground: #ffffff;
+  --purple-primary: #8b5cf6;
+  --purple-dark: #6d28d9;
+  --purple-light: #a855f7;
+  --purple-accent: #c084fc;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Estilos dos botões */
+.btn-primary {
+  background: linear-gradient(135deg, var(--purple-primary) 0%, var(--purple-light) 100%);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--purple-light);
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: 2px solid var(--purple-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.btn-secondary:hover {
+  background: var(--purple-primary);
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Header fixo ocupando 100% */
+.header-full-width {
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+}
+
+/* Navbar embaixo do header */
+.navbar-below-header {
+  margin-top: 80px;
+}
+
+/* Navbar ocupando 100vw */
+.navbar-full-width {
+  width: 100vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+}
+
+/* Botões da navbar sem bordas e background integrado */
+.navbar-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  background: transparent;
+  color: #d1d5db;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.navbar-button:hover {
+  background: rgba(139, 92, 246, 0.15);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.navbar-button:hover .button-text {
+  transform: translateX(2px);
+}
+
+.button-text {
+  transition: transform 0.3s ease;
+}
+
+/* Centralização perfeita da imagem */
+.hero-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 100vh;
+  padding: 0 1rem;
+}
+
+.profile-image-centered {
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Background cinza escuro */
+body {
+  background: #1f2937 !important;
+}
+
+/* Estilo para o dropdown dos projetos */
+.projects-dropdown {
+  background: rgba(17, 24, 39, 0.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(139, 92, 246, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.project-dropdown-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  background: rgba(31, 41, 55, 0.5);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.project-dropdown-button:hover {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: rgba(139, 92, 246, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+}
+
+/* Animação do dropdown */
+.dropdown-enter {
+  max-height: 0;
+  opacity: 0;
+}
+
+.dropdown-enter-active {
+  max-height: 5rem;
+  opacity: 1;
+  transition: all 0.5s ease;
+}
+
+.dropdown-exit {
+  max-height: 5rem;
+  opacity: 1;
+}
+
+.dropdown-exit-active {
+  max-height: 0;
+  opacity: 0;
+  transition: all 0.5s ease;
+}
+
+/* Animações para imagens dos projetos */
+.image-transition {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.image-fade-enter {
+  opacity: 0;
+  transform: scale(0.95) translateY(10px);
+}
+
+.image-fade-enter-active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.image-fade-exit {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.image-fade-exit-active {
+  opacity: 0;
+  transform: scale(1.05) translateY(-10px);
+}
+
+/* Animação das setas de navegação */
+.nav-arrow {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+}
+
+.nav-arrow:hover {
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+}
+
+/* Animação suave para mudança de conteúdo */
+@keyframes contentChange {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.content-change {
+  animation: contentChange 0.5s ease-in-out;
+}
+
+/* Melhorias para centralização das imagens */
+.project-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.project-gallery-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Centralização perfeita dos elementos do projeto */
+.project-section-grid {
+  display: grid;
+  place-items: center;
+  gap: 4rem;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  min-height: 80vh;
+}
+
+@media (max-width: 1024px) {
+  .project-section-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+}
+
+/* Responsividade melhorada */
+@media (max-width: 1024px) {
+  .navbar-full-width {
+    padding: 1rem 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-full-width {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0.5rem;
+  }
 }
