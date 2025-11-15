@@ -1,12 +1,12 @@
 ﻿@import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
+  --background: #231123;
   --foreground: #ffffff;
-  --purple-primary: #8b5cf6;
-  --purple-dark: #6d28d9;
-  --purple-light: #a855f7;
-  --purple-accent: #c084fc;
+  --purple-primary: #C30F45;
+  --purple-dark: #8b0a2d;
+  --purple-light: #d41450;
+  --purple-accent: #C30F45;
 }
 
 * {
@@ -41,12 +41,12 @@ body {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+  box-shadow: 0 10px 25px rgba(195, 15, 69, 0.4);
 }
 
 .btn-secondary {
   background: transparent;
-  color: var(--purple-light);
+  color: #ffffff;
   padding: 12px 24px;
   border-radius: 8px;
   border: 2px solid var(--purple-primary);
@@ -130,9 +130,10 @@ body {
   justify-content: center;
 }
 
-/* Background cinza escuro */
+/* Background com degradê suave */
 body {
-  background: #1f2937 !important;
+  background: linear-gradient(180deg, #231123 0%, #1a0d1a 25%, #120a12 50%, #0a050a 75%, #1a0520 100%) !important;
+  background-attachment: fixed;
 }
 
 /* Estilo para o dropdown dos projetos */
