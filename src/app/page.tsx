@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import FaultyTerminal from './FaultyTerminal';
+import PixelBlast from '@/components/PixelBlast';
+import GlitchText from '@/components/GlitchText';
 import DecryptedText from './DecryptedText';
 import { Syne_Mono } from 'next/font/google';
 
@@ -13,10 +14,14 @@ const syneMono = Syne_Mono({
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 40);
+      const scrollPosition = window.scrollY;
+      setScrolled(scrollPosition > 40);
+      // Mostra navbar após passar da seção hero (aproximadamente 100vh)
+      setShowNavbar(scrollPosition > window.innerHeight * 0.8);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
@@ -25,57 +30,101 @@ export default function Home() {
 
   return (
     <>
-      <section id="hero" className="h-screen relative overflow-hidden" style={{ background: '#000000' }}>
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <FaultyTerminal
-            scale={1.5}
-            gridMul={[2, 1]}
-            digitSize={1.2}
-            timeScale={1}
-            pause={false}
-            scanlineIntensity={1}
-            glitchAmount={1}
-            flickerAmount={1}
-            noiseAmp={1}
-            chromaticAberration={0}
-            dither={0}
-            curvature={0}
-            tint="#C30F45"
-            mouseReact={true}
-            mouseStrength={0.5}
-            pageLoadAnimation={false}
-            brightness={1}
-            className="w-full h-full"
-          />
+      {/* Navbar fixa - aparece apenas após a seção inicial */}
+      <nav 
+        className={`fixed top-0 left-0 w-full z-50 backdrop-blur-md transition-all duration-500 ${
+          showNavbar ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+        }`} 
+        style={{ background: 'rgba(0,0,0,0.5)', borderBottom: '1px solid rgba(111, 45, 189, 0.2)' }}
+      >
+        <div className="navbar-full-width max-w-7xl mx-auto">
+          <div className="text-xl font-bold" style={{ color: '#6F2DBD' }}>Igor Vieira</div>
+          <div className="flex gap-4">
+            <a href="#hero">
+              <button className="navbar-button">
+                <span className="button-text">Início</span>
+              </button>
+            </a>
+            <a href="#about">
+              <button className="navbar-button">
+                <span className="button-text">Sobre</span>
+              </button>
+            </a>
+            <a href="#projects">
+              <button className="navbar-button">
+                <span className="button-text">Projetos</span>
+              </button>
+            </a>
+            <a href="#contact">
+              <button className="navbar-button">
+                <span className="button-text">Contato</span>
+              </button>
+            </a>
+          </div>
         </div>
+      </nav>
 
-        <div
-          className="absolute bottom-0 left-0 w-full h-40 pointer-events-none z-30"
-          style={{
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,1))'
-          }}
+      {/* PixelBlast Background - apenas na seção hero e parte superior do about */}
+      <div className="absolute top-0 left-0 w-full z-0" style={{ height: '150vh', pointerEvents: 'none' }}>
+        <PixelBlast
+          variant="circle"
+          pixelSize={6}
+          color="#6F2DBD"
+          patternScale={3}
+          patternDensity={1.2}
+          pixelSizeJitter={0.5}
+          enableRipples
+          rippleSpeed={0.4}
+          rippleThickness={0.12}
+          rippleIntensityScale={1.5}
+          liquid
+          liquidStrength={0.12}
+          liquidRadius={1.2}
+          liquidWobbleSpeed={5}
+          speed={0.6}
+          edgeFade={0.25}
+          transparent
+          className=""
+          style={{ width: '100%', height: '100%' }}
         />
+      </div>
 
-        <div className="absolute inset-0 z-10 pointer-events-none">
-          <div className="absolute top-32 left-24 w-72 h-72 rounded-full blur-3xl" style={{ background: 'rgba(111, 45, 189, 0.05)' }} />
-          <div className="absolute bottom-32 right-24 w-72 h-72 rounded-full blur-3xl" style={{ background: 'rgba(111, 45, 189, 0.05)' }} />
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-2xl" style={{ background: 'rgba(35, 17, 35, 0.2)' }} />
-        </div>
-
+      <section id="hero" className="h-screen relative overflow-hidden">
         <div className="hero-center relative z-20 flex flex-col items-center justify-center text-center h-full">
           <div className={`transition-all duration-700 flex flex-col items-center justify-center ${scrolled ? 'opacity-0 -translate-y-10' : 'opacity-100'}`}>
             <div className={`${syneMono.className} mb-6`}>
-              <DecryptedText
-                text="Igor Gianeri Vieira"
-                speed={19}
-                maxIterations={20}
-                characters="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#"
-                className="text-white font-bold text-7xl md:text-8xl"
-                parentClassName="decrypted-parent"
-                encryptedClassName="decrypted-encrypted"
-                animateOn="view"
-                revealDirection="center"
-              />
+              <div className="flex flex-col md:flex-row items-center justify-center gap-4">
+                <DecryptedText
+                  text="Igor"
+                  speed={19}
+                  maxIterations={20}
+                  characters="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#"
+                  className="text-white font-bold text-7xl md:text-8xl"
+                  parentClassName="decrypted-parent"
+                  encryptedClassName="decrypted-encrypted"
+                  animateOn="view"
+                  revealDirection="center"
+                />
+                <GlitchText
+                  speed={1}
+                  enableShadows={true}
+                  enableOnHover={true}
+                  className="text-white font-bold text-7xl md:text-8xl"
+                >
+                  Gianeri
+                </GlitchText>
+                <DecryptedText
+                  text="Vieira"
+                  speed={19}
+                  maxIterations={20}
+                  characters="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#"
+                  className="text-white font-bold text-7xl md:text-8xl"
+                  parentClassName="decrypted-parent"
+                  encryptedClassName="decrypted-encrypted"
+                  animateOn="view"
+                  revealDirection="center"
+                />
+              </div>
             </div>
 
             <div>
@@ -95,7 +144,7 @@ export default function Home() {
         </div>
       </section>
 
-      <div style={{ background: 'linear-gradient(180deg, #000000 0%, #231123 100%)' }}>
+      <div className="relative z-10">
         <section id="about">
           <AboutSection />
         </section>
@@ -119,7 +168,7 @@ function AboutSection() {
   ];
 
   return (
-    <section className="min-h-screen flex flex-col justify-center items-center py-8 text-center">
+    <section className="min-h-screen flex flex-col justify-center items-center text-center" style={{ background: 'transparent', padding: '4rem 1.5rem' }}>
       <div className="w-full px-6 max-w-7xl">
         <div className="text-center mb-20">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Sobre Mim</h2>
@@ -225,10 +274,8 @@ function ProjectSections() {
           key={project.id}
           id={`project-${projectIndex}`}
           className="h-screen flex items-center relative overflow-hidden"
+          style={{ background: 'transparent' }}
         >
-          <div className="absolute inset-0 opacity-5">
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(195, 15, 69, 0.2) 0%, rgba(212, 20, 80, 0.2) 100%)' }} />
-          </div>
 
           <div className="absolute left-4 lg:left-12 top-1/2 transform -translate-y-1/2 z-10">
             <span className="text-6xl lg:text-9xl font-black" style={{ color: 'rgba(195, 15, 69, 0.2)' }}>
@@ -348,7 +395,7 @@ function ContactSection() {
   ];
 
   return (
-    <section className="min-h-screen flex items-center justify-center">
+    <section className="min-h-screen flex items-center justify-center" style={{ background: 'transparent', padding: '4rem 1.5rem' }}>
       <div className="max-w-4xl mx-auto px-6 text-center">
         <div className="mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Vamos Conversar</h2>

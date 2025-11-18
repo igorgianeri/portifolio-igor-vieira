@@ -1,56 +1,66 @@
-﻿@import "tailwindcss";
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
   --bg-top: #000000;      /* preto */
   --bg-bottom: #231123;   /* rgba(35,17,35,1) em hex */
-  --foreground: #ffffff;
-  --purple-primary: #C30F45;
-  --purple-dark: #8b0a2d;
-  --purple-light: #d41450;
-  --purple-accent: #C30F45;
+  --purple-primary: #6F2DBD;
+  --purple-dark: #4a1d7f;
+  --purple-light: #8b4ad9;
+  --purple-accent: #6F2DBD;
 
   /* default fallback positions (will be updated by JS) */
   --grad-start: 100vh;
   --grad-end: 300vh;
   --grad-color-a: rgba(0,0,0,0.0); /* start of gradient overlay (transparent) */
   --grad-color-b: rgba(111,45,189,0.12); /* intermediate purple tint */
-  --grad-color-c: rgba(35,17,35,0.0); /* end fade to transparent */
+  --grad-color-c: rgba(35,17,35,0.0); /* end fade to transparent */ --radius: 0.625rem; --background: oklch(1 0 0); --foreground: oklch(0.145 0 0); --card: oklch(1 0 0); --card-foreground: oklch(0.145 0 0); --popover: oklch(1 0 0); --popover-foreground: oklch(0.145 0 0); --primary: oklch(0.205 0 0); --primary-foreground: oklch(0.985 0 0); --secondary: oklch(0.97 0 0); --secondary-foreground: oklch(0.205 0 0); --muted: oklch(0.97 0 0); --muted-foreground: oklch(0.556 0 0); --accent: oklch(0.97 0 0); --accent-foreground: oklch(0.205 0 0); --destructive: oklch(0.577 0.245 27.325); --border: oklch(0.922 0 0); --input: oklch(0.922 0 0); --ring: oklch(0.708 0 0); --chart-1: oklch(0.646 0.222 41.116); --chart-2: oklch(0.6 0.118 184.704); --chart-3: oklch(0.398 0.07 227.392); --chart-4: oklch(0.828 0.189 84.429); --chart-5: oklch(0.769 0.188 70.08); --sidebar: oklch(0.985 0 0); --sidebar-foreground: oklch(0.145 0 0); --sidebar-primary: oklch(0.205 0 0); --sidebar-primary-foreground: oklch(0.985 0 0); --sidebar-accent: oklch(0.97 0 0); --sidebar-accent-foreground: oklch(0.205 0 0); --sidebar-border: oklch(0.922 0 0); --sidebar-ring: oklch(0.708 0 0);
 }
 
 /* Ensure full height and no default margins */
 html, body, #__next {
-  height: 100%;
+  height: auto;
+  min-height: 100%;
   margin: 0;
+  padding: 0;
 }
 
-/* Force single site background fallback (will be overwritten by overlay */
-body {
+html {
   background: #000000;
-  color: var(--foreground, #fff);
+  min-height: 100%;
 }
 
-/* Single continuous gradient overlay controlled by JS:
-   - --grad-height-px: height of the gradient band (contactBottom - aboutTop)
-   - --grad-pos-offset: background-position-y offset so the band top aligns with aboutTop
-   The gradient itself goes from black (top) -> purple (bottom).
-*/
+/* Force single site background - gradiente preto para roxo */
+body {
+  background: linear-gradient(180deg, #000000 0%, #2A1147 100%) !important;
+  background-attachment: scroll !important;
+  background-repeat: no-repeat !important;
+  min-height: 100%;
+  color: var(--foreground, #fff);
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Remove o overlay que estava criando divisórias */
+#__next,
+#__next::before,
+#__next::after {
+  background: none !important;
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
 #__next::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image: linear-gradient(180deg, #000000 0%, #231123 100%);
-  background-repeat: no-repeat;
-  background-size: 100% var(--grad-height-px, 100vh);
-  background-position: 0 var(--grad-pos-offset, 0px);
-  opacity: 1;
+  display: none !important;
+  content: none !important;
 }
 
 /* Ensure main content sits above the overlay */
 main, header, section, .hero-center {
   position: relative;
   z-index: 10;
+  background: transparent !important;
 }
 
 /* Make terminal container and site sections transparent so overlay shows through */
@@ -59,13 +69,32 @@ main, header, section, .hero-center, .project-section-grid, .faulty-terminal-con
   background: transparent !important;
   background-image: none !important;
   background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 
-/* Ensure any inline gradients are overridden */
-*[style*="linear-gradient"], *[style*="background:"] {
-  background: transparent !important;
-  background-image: none !important;
-  background-color: transparent !important;
+/* Remove divisórias e garante fluidez entre seções */
+section {
+  border: none !important;
+  margin: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Remove qualquer overlay ou camada extra */
+section::before,
+section::after,
+div[class*="absolute"]::before,
+div[class*="absolute"]::after {
+  display: none !important;
+}
+
+/* Garante que não há separadores visuais */
+#hero, #about, #projects, #contact {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 /* Estilos dos botões */
@@ -169,12 +198,6 @@ main, header, section, .hero-center, .project-section-grid, .faulty-terminal-con
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-/* Background com degradê suave */
-body {
-  background: linear-gradient(180deg, #231123 0%, #1a0d1a 25%, #120a12 50%, #0a050a 75%, #1a0520 100%) !important;
-  background-attachment: fixed;
 }
 
 /* Estilo para o dropdown dos projetos */
@@ -331,28 +354,86 @@ body {
 #__next {
   position: relative;
   z-index: 0;
+  background: transparent !important;
 }
 
-/* Continuous page gradient that maps to document coordinates.
-   JS sets --grad-start-px (top of "about") and --grad-height-px (distance from about top to contact bottom).
-   The pseudo-element uses background-size/background-position so the gradient spans exactly that region.
-*/
-/*#__next::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
-  background-repeat: no-repeat;
-  /* size and position will be controlled by JS using CSS variables (px values) */
-  /*background-size: 100% var(--grad-height-px, 100vh);
-  background-position: 0 calc(var(--grad-position-offset, 0px));
-  opacity: 1;
-}*/
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
 
-/* ensure main content layers above the overlay */
-main, header, section, .hero-center {
-  position: relative;
-  z-index: 10;
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
