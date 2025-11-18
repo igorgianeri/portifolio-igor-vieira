@@ -1,30 +1,71 @@
 ﻿@import "tailwindcss";
 
 :root {
-  --background: #231123;
+  --bg-top: #000000;      /* preto */
+  --bg-bottom: #231123;   /* rgba(35,17,35,1) em hex */
   --foreground: #ffffff;
   --purple-primary: #C30F45;
   --purple-dark: #8b0a2d;
   --purple-light: #d41450;
   --purple-accent: #C30F45;
+
+  /* default fallback positions (will be updated by JS) */
+  --grad-start: 100vh;
+  --grad-end: 300vh;
+  --grad-color-a: rgba(0,0,0,0.0); /* start of gradient overlay (transparent) */
+  --grad-color-b: rgba(111,45,189,0.12); /* intermediate purple tint */
+  --grad-color-c: rgba(35,17,35,0.0); /* end fade to transparent */
 }
 
-* {
+/* Ensure full height and no default margins */
+html, body, #__next {
+  height: 100%;
   margin: 0;
-  padding: 0;
-  box-sizing: border-box;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
+/* Force single site background fallback (will be overwritten by overlay */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-  line-height: 1.6;
-  overflow-x: hidden;
+  background: #000000;
+  color: var(--foreground, #fff);
+}
+
+/* Single continuous gradient overlay controlled by JS:
+   - --grad-height-px: height of the gradient band (contactBottom - aboutTop)
+   - --grad-pos-offset: background-position-y offset so the band top aligns with aboutTop
+   The gradient itself goes from black (top) -> purple (bottom).
+*/
+#__next::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: linear-gradient(180deg, #000000 0%, #231123 100%);
+  background-repeat: no-repeat;
+  background-size: 100% var(--grad-height-px, 100vh);
+  background-position: 0 var(--grad-pos-offset, 0px);
+  opacity: 1;
+}
+
+/* Ensure main content sits above the overlay */
+main, header, section, .hero-center {
+  position: relative;
+  z-index: 10;
+}
+
+/* Make terminal container and site sections transparent so overlay shows through */
+main, header, section, .hero-center, .project-section-grid, .faulty-terminal-container,
+.faulty-terminal-container canvas, #projects, #about, #contact, section[id] {
+  background: transparent !important;
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+/* Ensure any inline gradients are overridden */
+*[style*="linear-gradient"], *[style*="background:"] {
+  background: transparent !important;
+  background-image: none !important;
+  background-color: transparent !important;
 }
 
 /* Estilos dos botões */
@@ -284,4 +325,34 @@ body {
     gap: 1rem;
     padding: 1rem 0.5rem;
   }
+}
+
+/* ensure Next root is positioned so pseudo-element can be placed behind content */
+#__next {
+  position: relative;
+  z-index: 0;
+}
+
+/* Continuous page gradient that maps to document coordinates.
+   JS sets --grad-start-px (top of "about") and --grad-height-px (distance from about top to contact bottom).
+   The pseudo-element uses background-size/background-position so the gradient spans exactly that region.
+*/
+/*#__next::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+  background-repeat: no-repeat;
+  /* size and position will be controlled by JS using CSS variables (px values) */
+  /*background-size: 100% var(--grad-height-px, 100vh);
+  background-position: 0 calc(var(--grad-position-offset, 0px));
+  opacity: 1;
+}*/
+
+/* ensure main content layers above the overlay */
+main, header, section, .hero-center {
+  position: relative;
+  z-index: 10;
 }
