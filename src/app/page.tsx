@@ -15,6 +15,14 @@ const syneMono = Syne_Mono({
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [showNavbar, setShowNavbar] = useState(false);
+  const [showProjectsDropdown, setShowProjectsDropdown] = useState(false);
+
+  const projects = [
+    { id: 1, name: 'App Mobile E-commerce' },
+    { id: 2, name: 'Dashboard Analytics' },
+    { id: 3, name: 'Plataforma de Streaming' },
+    { id: 4, name: 'App Fitness Tracker' }
+  ];
 
   useEffect(() => {
     const onScroll = () => {
@@ -28,17 +36,38 @@ export default function Home() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const handleProjectClick = (projectId: number) => {
+    const element = document.getElementById(`project-${projectId - 1}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      setShowProjectsDropdown(false);
+    }
+  };
+
   return (
     <>
       {/* Navbar fixa - aparece apenas após a seção inicial */}
       <nav 
-        className={`fixed top-0 left-0 w-full z-50 backdrop-blur-md transition-all duration-500 ${
+        className={`fixed top-0 left-0 w-full z-50 backdrop-blur-lg transition-all duration-500 ${
           showNavbar ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
         }`} 
-        style={{ background: 'rgba(0,0,0,0.5)', borderBottom: '1px solid rgba(111, 45, 189, 0.2)' }}
+        style={{ background: 'rgba(0,0,0,0.2)', borderBottom: '1px solid rgba(111, 45, 189, 0.2)' }}
       >
         <div className="navbar-full-width max-w-7xl mx-auto">
-          <div className="text-xl font-bold" style={{ color: '#6F2DBD' }}>Igor Vieira</div>
+          <div className="flex items-center gap-4">
+            {/* Ícone circular branco */}
+            <div className="w-12 h-12 rounded-full bg-white"></div>
+            
+            <div className={`text-2xl font-bold ${syneMono.className}`} style={{ color: '#6F2DBD' }}>
+              <GlitchText
+                speed={5}
+                enableShadows={false}
+                enableOnHover={false}
+              >
+                Igor Gianeri
+              </GlitchText>
+            </div>
+          </div>
           <div className="flex gap-4">
             <a href="#hero">
               <button className="navbar-button">
@@ -50,11 +79,50 @@ export default function Home() {
                 <span className="button-text">Sobre</span>
               </button>
             </a>
-            <a href="#projects">
-              <button className="navbar-button">
+            <div className="relative">
+              <button 
+                className="navbar-button flex items-center gap-2"
+                onClick={() => setShowProjectsDropdown(!showProjectsDropdown)}
+              >
                 <span className="button-text">Projetos</span>
+                <svg 
+                  className={`w-4 h-4 transition-transform duration-500 ${showProjectsDropdown ? 'rotate-180' : 'rotate-0'}`}
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </button>
-            </a>
+              <div 
+                className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-2 backdrop-blur-lg rounded-lg shadow-lg overflow-hidden transition-all duration-500 ease-out ${
+                  showProjectsDropdown 
+                    ? 'opacity-100 translate-y-0 pointer-events-auto' 
+                    : 'opacity-0 -translate-y-4 pointer-events-none'
+                }`}
+                style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(111, 45, 189, 0.3)' }}
+              >
+                <div className="flex gap-6 px-6 py-4">
+                  {projects.map((project, index) => (
+                    <button
+                      key={project.id}
+                      onClick={() => handleProjectClick(project.id)}
+                      className="flex flex-col items-center gap-2 hover:scale-110 transition-all duration-300 group"
+                    >
+                      <span 
+                        className="text-4xl font-black transition-all duration-300"
+                        style={{ color: 'rgba(111, 45, 189, 0.3)' }}
+                      >
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <span className="text-white text-xs whitespace-nowrap group-hover:text-purple-400 transition-colors">
+                        {project.name}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
             <a href="#contact">
               <button className="navbar-button">
                 <span className="button-text">Contato</span>
@@ -376,56 +444,90 @@ function ProjectSections() {
 }
 
 function ContactSection() {
-  const contacts = [
-    { 
-      label: 'Email', 
-      value: 'igor@exemplo.com',
-      icon: '📧'
-    },
-    { 
-      label: 'LinkedIn', 
-      value: '/in/igor-vieira',
-      icon: '💼'
-    },
-    { 
-      label: 'GitHub', 
-      value: '/igorgianeri',
-      icon: '💻'
-    }
-  ];
+  const [showEmail, setShowEmail] = useState(false);
+
+  const handleLinkedInClick = () => {
+    window.open('https://www.linkedin.com/in/igor-vieira-103706304/', '_blank');
+  };
+
+  const handleGitHubClick = () => {
+    window.open('https://github.com/igorgianeri', '_blank');
+  };
 
   return (
-    <section className="min-h-screen flex items-center justify-center" style={{ background: 'transparent', padding: '4rem 1.5rem' }}>
-      <div className="max-w-4xl mx-auto px-6 text-center">
-        <div className="mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Vamos Conversar</h2>
-          <p className="text-white text-xl max-w-2xl mx-auto leading-relaxed">
-            Estou sempre aberto a novas oportunidades e projetos interessantes. 
-            Entre em contato e vamos criar algo incrível juntos!
-          </p>
-        </div>
-        
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
-          {contacts.map((contact) => (
-            <div 
-              key={contact.label} 
-              className="p-8 rounded-3xl border transition-all duration-300 hover:scale-105 backdrop-blur-sm group"
-              style={{ background: 'rgba(35, 17, 35, 0.5)', borderColor: 'rgba(195, 15, 69, 0.2)' }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(195, 15, 69, 0.5)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(195, 15, 69, 0.2)'; }}
-            >
-              <div className="w-16 h-16 rounded-2xl mx-auto mb-6 flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, #C30F45 0%, #d41450 100%)' }}>
-                {contact.icon}
-              </div>
-              <h3 className="text-white font-semibold mb-3 text-lg">{contact.label}</h3>
-              <p className="text-white text-base">{contact.value}</p>
-            </div>
-          ))}
-        </div>
+    <section className="flex flex-col items-center justify-center relative" style={{ background: 'transparent', padding: '2rem 1.5rem', minHeight: '30vh' }}>
+      {/* Profile - Ícone no canto esquerdo */}
+      <div className="absolute left-8 md:left-16 transition-all duration-500 ease-out hover:scale-110">
+        <img 
+          src="/icons/profile.png" 
+          alt="Profile"
+          className="w-20 h-20 object-cover rounded-full"
+        />
+      </div>
 
-        <button className="btn-primary text-lg px-10 py-5 shadow-lg shadow-purple-primary/25">
-          Entrar em Contato
-        </button>
+      <div className="max-w-4xl mx-auto px-6 text-center w-full">
+        <h2 className="text-2xl font-semibold mb-8" style={{ color: '#6F2DBD' }}>Contato</h2>
+        
+        <div className="flex justify-center items-center gap-8">
+          {/* GitHub */}
+          <div 
+            className="cursor-pointer transition-all duration-700 ease-out hover:scale-125 hover:rotate-12"
+            onClick={handleGitHubClick}
+            style={{ 
+              transform: showEmail ? 'translateX(-30px)' : 'translateX(0)',
+              transition: 'all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)'
+            }}
+          >
+            <img 
+              src="/icons/github.png" 
+              alt="GitHub"
+              className="w-12 h-12 object-contain"
+            />
+          </div>
+
+          {/* Gmail com hover */}
+          <div 
+            className="relative cursor-pointer transition-all duration-1000 ease-out"
+            onMouseEnter={() => setShowEmail(true)}
+            onMouseLeave={() => setShowEmail(false)}
+          >
+            {showEmail ? (
+              <div 
+                className="text-white font-semibold text-base whitespace-nowrap"
+                style={{
+                  animation: 'fade-in 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards'
+                }}
+              >
+                gianeri.vieira@gmail.com
+              </div>
+            ) : (
+              <img 
+                src="/icons/gmail.png" 
+                alt="Gmail"
+                className="w-12 h-12 object-contain"
+                style={{
+                  transition: 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                }}
+              />
+            )}
+          </div>
+
+          {/* LinkedIn */}
+          <div 
+            className="cursor-pointer transition-all duration-700 ease-out hover:scale-125 hover:-rotate-12"
+            onClick={handleLinkedInClick}
+            style={{ 
+              transform: showEmail ? 'translateX(30px)' : 'translateX(0)',
+              transition: 'all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)'
+            }}
+          >
+            <img 
+              src="/icons/linkedin.png" 
+              alt="LinkedIn"
+              className="w-12 h-12 object-contain"
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
