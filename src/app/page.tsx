@@ -20,18 +20,18 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const projects = [
-    { id: 1, name: 'App Mobile E-commerce' },
-    { id: 2, name: 'Dashboard Analytics' },
-    { id: 3, name: 'Plataforma de Streaming' },
-    { id: 4, name: 'App Fitness Tracker' }
+    { id: 1, name: 'Projeto Cordel' },
+    { id: 2, name: 'Projeto CERNE' },
+    { id: 3, name: 'Simpliza' }
   ];
 
   useEffect(() => {
     const onScroll = () => {
       const scrollPosition = window.scrollY;
       setScrolled(scrollPosition > 40);
-      // Mostra navbar após passar da seção hero (aproximadamente 100vh)
-      setShowNavbar(scrollPosition > window.innerHeight * 0.8);
+      // Mostra navbar quando chegar na seção "sobre"
+      const shouldShow = scrollPosition > window.innerHeight * 0.7;
+      setShowNavbar(shouldShow);
 
       // Detecta se chegou ao final da página
       const windowHeight = window.innerHeight;
@@ -100,177 +100,302 @@ export default function Home() {
 
   return (
     <>
-      {/* Navbar fixa - aparece apenas após a seção inicial */}
-      <nav 
-        className={`fixed top-0 left-0 w-full z-50 backdrop-blur-lg transition-all duration-500 ${
-          showNavbar ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-        }`} 
-        style={{ background: 'rgba(0,0,0,0.2)', borderBottom: '1px solid rgba(111, 45, 189, 0.2)' }}
-      >
-        <div className="w-full max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 md:gap-4">
-            {/* Ícone circular branco */}
-            <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-white flex-shrink-0"></div>
+      {/* NOVA NAVBAR - Recriada do zero */}
+      <nav className={`fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-black/80 border-b border-purple-500/20 transition-all duration-500 ${
+        showNavbar ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
             
-            <div className={`text-base md:text-2xl font-bold ${syneMono.className} whitespace-nowrap`} style={{ color: '#6F2DBD' }}>
-              <GlitchText
-                speed={5}
-                enableShadows={false}
-                enableOnHover={false}
-              >
-                Igor Gianeri
-              </GlitchText>
-            </div>
-          </div>
-
-          {/* Menu Desktop */}
-          <div className="hidden md:flex gap-4 items-center">
-            <a href="#hero">
-              <button className="navbar-button px-4">
-                <span className="button-text" style={{ color: activeSection === 'hero' ? '#C30F45' : '' }}>Início</span>
-              </button>
-            </a>
-            <a href="#about">
-              <button className="navbar-button px-4">
-                <span className="button-text" style={{ color: activeSection === 'about' ? '#C30F45' : '' }}>Sobre</span>
-              </button>
-            </a>
-            <div className="relative">
-              <button 
-                className="navbar-button flex items-center gap-2 px-4"
-                onClick={() => setShowProjectsDropdown(!showProjectsDropdown)}
-              >
-                <span className="button-text" style={{ color: activeSection === 'projects' ? '#C30F45' : '' }}>Projetos</span>
-                <svg 
-                  className={`w-4 h-4 transition-transform duration-500 ${showProjectsDropdown ? 'rotate-180' : 'rotate-0'}`}
-                  fill="none" 
-                  stroke={activeSection === 'projects' ? '#C30F45' : 'currentColor'}
-                  viewBox="0 0 24 24"
+            {/* Logo Section */}
+            <div className="flex items-center space-x-3">
+              <img 
+                src="/images/Perfil.jpg" 
+                alt="Igor Gianeri"
+                className="w-10 h-10 rounded-full object-cover border-2 border-purple-500"
+              />
+              <div className={`text-xl font-bold text-purple-400 ${syneMono.className}`}>
+                <GlitchText
+                  speed={5}
+                  enableShadows={false}
+                  enableOnHover={false}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              <div 
-                className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-2 backdrop-blur-lg rounded-lg shadow-lg overflow-hidden transition-all duration-500 ease-out ${
-                  showProjectsDropdown 
-                    ? 'opacity-100 translate-y-0 pointer-events-auto' 
-                    : 'opacity-0 -translate-y-4 pointer-events-none'
-                }`}
-                style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(111, 45, 189, 0.3)' }}
-              >
-                <div className="flex gap-6 px-6 py-4">
-                  {projects.map((project, index) => (
-                    <button
-                      key={project.id}
-                      onClick={() => handleProjectClick(project.id)}
-                      className="flex flex-col items-center gap-2 hover:scale-110 transition-all duration-300 group"
-                    >
-                      <span 
-                        className="text-4xl font-black transition-all duration-300"
-                        style={{ color: 'rgba(111, 45, 189, 0.3)' }}
-                      >
-                        {String(index + 1).padStart(2, '0')}
-                      </span>
-                      <span className="text-white text-xs whitespace-nowrap group-hover:text-purple-400 transition-colors">
-                        {project.name}
-                      </span>
-                    </button>
-                  ))}
-                </div>
+                  Igor Gianeri
+                </GlitchText>
               </div>
             </div>
-            <a href="#contact">
-              <button className="navbar-button px-4">
-                <span className="button-text" style={{ color: activeSection === 'contact' ? '#C30F45' : '' }}>Contato</span>
-              </button>
-            </a>
-          </div>
 
-          {/* Botão Hambúrguer Mobile */}
-          <button 
-            className="md:hidden p-2 flex-shrink-0"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {mobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
-        </div>
+            {/* Desktop Navigation - Minimalista */}
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '32px',
+              visibility: 'visible !important',
+              opacity: '1 !important'
+            }}>
+                
+                <a href="#hero" style={{ textDecoration: 'none' }}>
+                  <div 
+                    style={{
+                      color: '#ffffff',
+                      padding: '8px 16px',
+                      fontSize: '16px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      position: 'relative'
+                    }}
+                    onMouseEnter={(e) => {
+                      const target = e.currentTarget as HTMLElement;
+                      target.style.color = '#C30F45';
+                      target.style.transform = 'translateX(4px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      const target = e.currentTarget as HTMLElement;
+                      target.style.color = '#ffffff';
+                      target.style.transform = 'translateX(0px)';
+                    }}
+                  >
+                    Início
+                  </div>
+                </a>
 
-        {/* Menu Mobile Dropdown */}
-        <div 
-          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-            mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-          }`}
-          style={{ background: 'rgba(0,0,0,0.3)' }}
-        >
-          <div className="flex flex-col py-4 px-6 gap-4">
-            <a href="#hero" onClick={() => setMobileMenuOpen(false)}>
-              <button className="w-full text-left py-2 px-4 rounded">
-                <span className="text-white text-sm" style={{ color: activeSection === 'hero' ? '#C30F45' : '' }}>Início</span>
-              </button>
-            </a>
-            <a href="#about" onClick={() => setMobileMenuOpen(false)}>
-              <button className="w-full text-left py-2 px-4 rounded">
-                <span className="text-white text-sm" style={{ color: activeSection === 'about' ? '#C30F45' : '' }}>Sobre</span>
-              </button>
-            </a>
-            <div>
-              <button 
-                className="w-full text-left py-2 px-4 rounded flex items-center justify-between"
-                onClick={() => setShowProjectsDropdown(!showProjectsDropdown)}
+                <a href="#about" style={{ textDecoration: 'none' }}>
+                  <div 
+                    style={{
+                      color: '#ffffff',
+                      padding: '8px 16px',
+                      fontSize: '16px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      position: 'relative'
+                    }}
+                    onMouseEnter={(e) => {
+                      const target = e.currentTarget as HTMLElement;
+                      target.style.color = '#C30F45';
+                      target.style.transform = 'translateX(4px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      const target = e.currentTarget as HTMLElement;
+                      target.style.color = '#ffffff';
+                      target.style.transform = 'translateX(0px)';
+                    }}
+                  >
+                    Sobre
+                  </div>
+                </a>
+
+                <div style={{ position: 'relative' }}>
+                  <div
+                    onClick={() => setShowProjectsDropdown(!showProjectsDropdown)}
+                    style={{
+                      color: '#ffffff',
+                      padding: '8px 16px',
+                      fontSize: '16px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      position: 'relative'
+                    }}
+                    onMouseEnter={(e) => {
+                      const target = e.currentTarget as HTMLElement;
+                      target.style.color = '#C30F45';
+                      target.style.transform = 'translateX(4px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      const target = e.currentTarget as HTMLElement;
+                      target.style.color = '#ffffff';
+                      target.style.transform = 'translateX(0px)';
+                    }}
+                  >
+                    Projetos
+                    <span style={{ 
+                      fontSize: '12px',
+                      transition: 'transform 0.3s ease',
+                      transform: showProjectsDropdown ? 'rotate(180deg)' : 'rotate(0deg)'
+                    }}>
+                      ▼
+                    </span>
+                  </div>
+                  
+                  {showProjectsDropdown && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: '0',
+                      marginTop: '12px',
+                      width: '240px',
+                      backgroundColor: 'rgba(0, 0, 0, 0.95)',
+                      backdropFilter: 'blur(12px)',
+                      border: '1px solid rgba(195, 15, 69, 0.3)',
+                      borderRadius: '12px',
+                      padding: '8px 0',
+                      zIndex: 1000,
+                      boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)'
+                    }}>
+                      {projects.map((project, index) => (
+                        <div
+                          key={project.id}
+                          onClick={() => {
+                            handleProjectClick(project.id);
+                            setShowProjectsDropdown(false);
+                          }}
+                          style={{
+                            padding: '12px 16px',
+                            color: '#ffffff',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            const target = e.currentTarget as HTMLElement;
+                            target.style.backgroundColor = 'rgba(195, 15, 69, 0.1)';
+                            target.style.color = '#C30F45';
+                            target.style.transform = 'translateX(4px)';
+                          }}
+                          onMouseLeave={(e) => {
+                            const target = e.currentTarget as HTMLElement;
+                            target.style.backgroundColor = 'transparent';
+                            target.style.color = '#ffffff';
+                            target.style.transform = 'translateX(0px)';
+                          }}
+                        >
+                          <span style={{ 
+                            color: '#C30F45', 
+                            fontWeight: 'bold', 
+                            fontSize: '16px',
+                            opacity: '0.7'
+                          }}>
+                            {String(index + 1).padStart(2, '0')}
+                          </span>
+                          <span style={{ fontSize: '14px' }}>{project.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <a href="#contact" style={{ textDecoration: 'none' }}>
+                  <div 
+                    style={{
+                      color: '#ffffff',
+                      padding: '8px 16px',
+                      fontSize: '16px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      position: 'relative'
+                    }}
+                    onMouseEnter={(e) => {
+                      const target = e.currentTarget as HTMLElement;
+                      target.style.color = '#C30F45';
+                      target.style.transform = 'translateX(4px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      const target = e.currentTarget as HTMLElement;
+                      target.style.color = '#ffffff';
+                      target.style.transform = 'translateX(0px)';
+                    }}
+                  >
+                    Contato
+                  </div>
+                </a>
+
+            </div>
+
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
               >
-                <span className="text-white text-sm" style={{ color: activeSection === 'projects' ? '#C30F45' : '' }}>Projetos</span>
-                <svg 
-                  className={`w-4 h-4 text-white transition-transform duration-300 ${showProjectsDropdown ? 'rotate-180' : 'rotate-0'}`}
-                  fill="none" 
-                  stroke={activeSection === 'projects' ? '#C30F45' : 'currentColor'}
+                <svg
+                  className="h-6 w-6"
+                  stroke="currentColor"
+                  fill="none"
                   viewBox="0 0 24 24"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  {mobileMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
                 </svg>
               </button>
-              <div 
-                className={`overflow-hidden transition-all duration-300 ${
-                  showProjectsDropdown ? 'max-h-96 mt-2' : 'max-h-0'
-                }`}
-              >
-                <div className="flex flex-col gap-2 pl-4">
-                  {projects.map((project, index) => (
-                    <button
-                      key={project.id}
-                      onClick={() => {
-                        handleProjectClick(project.id);
-                        setMobileMenuOpen(false);
-                        setShowProjectsDropdown(false);
-                      }}
-                      className="flex items-center gap-3 py-2 px-4 rounded hover:bg-white/10 transition-colors"
-                    >
-                      <span 
-                        className="text-lg font-black"
-                        style={{ color: 'rgba(111, 45, 189, 0.5)' }}
-                      >
-                        {String(index + 1).padStart(2, '0')}
-                      </span>
-                      <span className="text-white text-xs">
-                        {project.name}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
-            <a href="#contact" onClick={() => setMobileMenuOpen(false)}>
-              <button className="w-full text-left py-2 px-4 rounded">
-                <span className="text-white text-sm" style={{ color: activeSection === 'contact' ? '#C30F45' : '' }}>Contato</span>
-              </button>
-            </a>
           </div>
         </div>
+
+        {/* Mobile Navigation Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-black/95 backdrop-blur-md border-t border-purple-500/20">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+              
+              <a href="#hero" onClick={() => setMobileMenuOpen(false)}>
+                <button className="text-white hover:text-purple-300 hover:bg-white/10 block px-3 py-2 rounded-md text-base font-medium w-full text-left">
+                  Início
+                </button>
+              </a>
+
+              <a href="#about" onClick={() => setMobileMenuOpen(false)}>
+                <button className="text-white hover:text-purple-300 hover:bg-white/10 block px-3 py-2 rounded-md text-base font-medium w-full text-left">
+                  Sobre
+                </button>
+              </a>
+
+              <div className="px-3 py-2">
+                <button 
+                  onClick={() => setShowProjectsDropdown(!showProjectsDropdown)}
+                  className="text-white hover:text-purple-300 flex items-center justify-between w-full"
+                >
+                  <span>Projetos</span>
+                  <svg 
+                    className={`w-4 h-4 transition-transform duration-200 ${showProjectsDropdown ? 'rotate-180' : ''}`}
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                
+                {showProjectsDropdown && (
+                  <div className="mt-2 space-y-1">
+                    {projects.map((project, index) => (
+                      <button
+                        key={project.id}
+                        onClick={() => {
+                          handleProjectClick(project.id);
+                          setMobileMenuOpen(false);
+                          setShowProjectsDropdown(false);
+                        }}
+                        className="text-gray-300 hover:text-purple-300 hover:bg-white/10 block px-4 py-2 rounded-md text-sm w-full text-left flex items-center space-x-2"
+                      >
+                        <span className="text-purple-400 font-bold">
+                          {String(index + 1).padStart(2, '0')}
+                        </span>
+                        <span>{project.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <a href="#contact" onClick={() => setMobileMenuOpen(false)}>
+                <button className="text-white hover:text-purple-300 hover:bg-white/10 block px-3 py-2 rounded-md text-base font-medium w-full text-left">
+                  Contato
+                </button>
+              </a>
+
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* PixelBlast Background - apenas na seção hero e parte superior do about */}
@@ -392,9 +517,11 @@ function AboutSection() {
             </p>
             
             <div className="pt-4 md:pt-6">
-              <button className="btn-primary text-base md:text-lg px-6 py-3 md:px-8 md:py-4">
-                Download CV
-              </button>
+              <a href="/curriculo-igor-vieira.pdf" download="Igor_Vieira_Curriculo.pdf">
+                <button className="btn-primary text-base md:text-lg px-6 py-3 md:px-8 md:py-4">
+                  Download CV
+                </button>
+              </a>
             </div>
           </div>
           
@@ -422,51 +549,42 @@ function ProjectSections() {
   const projects = [
     {
       id: 1,
-      title: 'App Mobile E-commerce',
-      description: 'Aplicativo completo de e-commerce desenvolvido em React Native com integração de pagamentos, carrinho de compras e sistema de avaliações. Interface moderna e experiência de usuário otimizada.',
+      title: 'Projeto Cordel',
+      description: 'Projeto criado durante o curso de HTML5 e CSS3 do CursoEmVídeo. É um projeto de estudo criado em HTML como um cordel digital contendo poemas do autor Milton Duarte. Um projeto simples para estudos de background e organização de página.',
       images: [
-        { id: 0, placeholder: 'Tela Principal' },
-        { id: 1, placeholder: 'Carrinho' },
-        { id: 2, placeholder: 'Pagamento' },
-        { id: 3, placeholder: 'Perfil' }
+        { id: 0, src: '/images/Cordel1.jpg', alt: 'Página inicial do Cordel' },
+        { id: 1, src: '/images/Cordel2.jpg', alt: 'Seção dos poemas' },
+        { id: 2, src: '/images/Cordel3.jpg', alt: 'Design responsivo' },
+        { id: 3, src: '/images/Cordel4.jpg', alt: 'Efeitos visuais' }
       ],
-      technologies: ['React Native', 'TypeScript', 'Redux', 'Firebase']
+      technologies: ['HTML5', 'CSS3', 'Design Responsivo'],
+      repositoryUrl: 'https://github.com/igorgianeri/projeto-cordel'
     },
     {
       id: 2,
-      title: 'Dashboard Analytics',
-      description: 'Dashboard interativo para análise de dados com gráficos em tempo real, filtros avançados e exportação de relatórios.',
+      title: 'Projeto CERNE',
+      description: 'Projeto criado durante o curso técnico de Desenvolvimento de Sistemas. Criado como um projeto mobile, o CERNE é um bloco de notas simples com a função de criar notas desenhadas. O Aplicativo foi criado com o intuíto de estudar tecnologias Tailwind e testar novas funções do React Native.',
       images: [
-        { id: 0, placeholder: 'Dashboard' },
-        { id: 1, placeholder: 'Gráficos' },
-        { id: 2, placeholder: 'Relatórios' },
-        { id: 3, placeholder: 'Filtros' }
+        { id: 0, src: '/images/Cerne1.jpg', alt: 'Tela de login' },
+        { id: 1, src: '/images/Cerne2.jpg', alt: 'Lista de notas' },
+        { id: 2, src: '/images/Cerne3.jpg', alt: 'Editor de desenhos' },
+        { id: 3, src: '/images/Cerne4.jpg', alt: 'Configurações' }
       ],
-      technologies: ['Next.js', 'Chart.js', 'TailwindCSS', 'API REST']
+      technologies: ['React Native', 'TailwindCSS', 'Canvas API'],
+      repositoryUrl: 'https://github.com/igorgianeri/projeto-blocodenotas'
     },
     {
       id: 3,
-      title: 'Plataforma de Streaming',
-      description: 'Plataforma completa de streaming com player personalizado, sistema de favoritos e busca avançada.',
+      title: 'Simpliza',
+      description: 'Trabalho de Conclusão de Curso para o curso técnico de Desenvolvimento de Sistemas. Um aplicativo Mobile criado em React com o objetivo de auxiliar microempreendedores a fazer gestão de finanças. Projeto mais complexo e detalhado até o momento.',
       images: [
-        { id: 0, placeholder: 'Player' },
-        { id: 1, placeholder: 'Catálogo' },
-        { id: 2, placeholder: 'Busca' },
-        { id: 3, placeholder: 'Perfis' }
+        { id: 0, src: '/images/Simpliza1.jpg', alt: 'Dashboard principal' },
+        { id: 1, src: '/images/Simpliza2.jpg', alt: 'Histórico de transações' },
+        { id: 2, src: '/images/Simpliza3.jpg', alt: 'Calculadora DAS' },
+        { id: 3, src: '/images/Simplzia4.jpg', alt: 'Configurações' }
       ],
-      technologies: ['React', 'Node.js', 'MongoDB', 'Socket.io']
-    },
-    {
-      id: 4,
-      title: 'App Fitness Tracker',
-      description: 'Aplicativo de acompanhamento fitness com tracking de exercícios, metas personalizadas e integração com wearables.',
-      images: [
-        { id: 0, placeholder: 'Treinos' },
-        { id: 1, placeholder: 'Estatísticas' },
-        { id: 2, placeholder: 'Social' },
-        { id: 3, placeholder: 'Metas' }
-      ],
-      technologies: ['React Native', 'HealthKit', 'GraphQL', 'AWS']
+      technologies: ['React Native', 'Firebase', 'Chart.js', 'AsyncStorage'],
+      repositoryUrl: 'https://github.com/DanielAzeved0/Simpliza-TCC'
     }
   ];
 
@@ -540,10 +658,11 @@ function ProjectSections() {
               <div className="flex flex-col items-center justify-center space-y-4 md:space-y-6 lg:col-span-2 order-2 lg:order-1">
                 <div className="w-full max-w-2xl mx-auto">
                   <div 
-                    className="relative overflow-hidden rounded-2xl md:rounded-3xl aspect-video shadow-2xl border border-transparent transition-all duration-300 select-none" 
+                    className="relative overflow-hidden rounded-2xl md:rounded-3xl shadow-2xl border border-transparent transition-all duration-300 select-none hover:scale-105 hover:shadow-3xl" 
                     style={{ 
                       background: 'linear-gradient(135deg, rgba(35, 17, 35, 0.7) 0%, rgba(26, 13, 26, 0.7) 100%)',
-                      cursor: isDragging ? 'grabbing' : 'grab'
+                      cursor: isDragging ? 'grabbing' : 'grab',
+                      aspectRatio: '4/3'
                     }}
                     onMouseDown={(e) => handleDragStart(e)}
                     onMouseMove={(e) => handleDragMove(e)}
@@ -553,28 +672,30 @@ function ProjectSections() {
                     onTouchMove={(e) => handleDragMove(e)}
                     onTouchEnd={(e) => handleDragEnd(e, projectIndex)}
                   >
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <span className="text-xl md:text-3xl lg:text-4xl font-bold text-white">
-                        {project.images[selectedImages[projectIndex]].placeholder}
-                      </span>
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-1">
+                      <img 
+                        src={project.images[selectedImages[projectIndex]].src}
+                        alt={project.images[selectedImages[projectIndex]].alt}
+                        className="max-w-full max-h-full object-contain rounded-xl md:rounded-2xl shadow-lg transition-transform duration-300"
+                      />
                     </div>
 
                     <button
                       onClick={() => handleImageChange(projectIndex, selectedImages[projectIndex] === 0 ? project.images.length - 1 : selectedImages[projectIndex] - 1)}
-                      className="nav-arrow absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 text-white p-2 md:p-3 rounded-full z-10"
+                      className="absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 text-white p-2 md:p-3 rounded-full z-10 transition-all duration-300 hover:scale-110 hover:bg-opacity-80"
                       style={{ background: 'rgba(0,0,0,0.4)' }}
                     >
-                      <svg className="w-4 h-4 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 md:w-6 md:h-6 transition-transform duration-200 hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                       </svg>
                     </button>
 
                     <button
                       onClick={() => handleImageChange(projectIndex, (selectedImages[projectIndex] + 1) % project.images.length)}
-                      className="nav-arrow absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 text-white p-2 md:p-3 rounded-full z-10"
+                      className="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 text-white p-2 md:p-3 rounded-full z-10 transition-all duration-300 hover:scale-110 hover:bg-opacity-80"
                       style={{ background: 'rgba(0,0,0,0.4)' }}
                     >
-                      <svg className="w-4 h-4 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 md:w-6 md:h-6 transition-transform duration-200 hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </button>
@@ -589,15 +710,24 @@ function ProjectSections() {
                         <button
                           key={image.id}
                           onClick={() => handleImageChange(projectIndex, imageIndex)}
-                          className={`aspect-video rounded-lg md:rounded-xl flex items-center justify-center transition-all duration-500 ${selected ? 'scale-105' : ''}`}
+                          className={`rounded-lg md:rounded-xl flex items-center justify-center transition-all duration-500 overflow-hidden relative hover:scale-110 hover:shadow-lg ${
+                            selected 
+                              ? 'scale-105 ring-4 ring-red-500 ring-opacity-80 border-2 border-red-500' 
+                              : 'border-2 border-transparent hover:border-purple-400 hover:border-opacity-50'
+                          }`}
                           style={{
-                            background: selected ? 'linear-gradient(135deg, #C30F45 0%, #d41450 100%)' : 'linear-gradient(135deg, rgba(35, 17, 35, 0.7) 0%, rgba(26, 13, 26, 0.7) 100%)',
-                            borderColor: selected ? '#C30F45' : 'transparent'
+                            aspectRatio: '4/3',
+                            background: 'linear-gradient(135deg, rgba(35, 17, 35, 0.7) 0%, rgba(26, 13, 26, 0.7) 100%)'
                           }}
                         >
-                          <span className="text-xs md:text-sm lg:text-base font-semibold text-white">
+                          <img 
+                            src={image.src}
+                            alt={image.alt}
+                            className="w-full h-full object-cover transition-transform duration-300 rounded-md md:rounded-lg"
+                          />
+                          <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded-full text-xs font-bold backdrop-blur-sm">
                             {imageIndex + 1}
-                          </span>
+                          </div>
                         </button>
                       );
                     })}
@@ -627,9 +757,13 @@ function ProjectSections() {
                 </div>
 
                 <div className="flex justify-center lg:justify-start">
-                  <button className="border border-transparent text-white text-sm px-6 py-2 md:px-8 md:py-3 rounded-lg transition-all duration-300 font-medium shadow-lg" style={{ background: 'linear-gradient(135deg, rgba(35, 17, 35, 0.7) 0%, rgba(26, 13, 26, 0.7) 100%)' }}>
-                    Ver repositório
-                  </button>
+                  <a href={project.repositoryUrl} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+                    <button className="group relative overflow-hidden border-2 border-transparent text-white text-sm px-6 py-2 md:px-8 md:py-3 rounded-lg transition-all duration-300 font-medium shadow-lg hover:border-purple-400 hover:scale-105 hover:shadow-purple-500/25 hover:shadow-xl cursor-pointer" style={{ background: 'linear-gradient(135deg, rgba(35, 17, 35, 0.7) 0%, rgba(26, 13, 26, 0.7) 100%)' }}>
+                      <span className="relative z-10 group-hover:text-purple-200 transition-colors duration-300">Ver repositório</span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-20 blur-sm transition-opacity duration-300"></div>
+                    </button>
+                  </a>
                 </div>
               </div>
             </div>
