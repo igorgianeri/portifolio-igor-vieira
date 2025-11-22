@@ -130,8 +130,8 @@ export default function Home() {
               display: 'flex', 
               alignItems: 'center', 
               gap: '32px',
-              visibility: 'visible !important',
-              opacity: '1 !important'
+              visibility: 'visible',
+              opacity: 1
             }}>
                 
                 <a href="#hero" style={{ textDecoration: 'none' }}>
