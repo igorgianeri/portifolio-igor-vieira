@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useEffect, useRef, useMemo, useCallback, useState } from 'react';
 import { Renderer, Program, Mesh, Color, Triangle } from 'ogl';
 
 const vertexShader = `
@@ -281,6 +281,16 @@ export default function FaultyTerminal({
   style,
   ...rest
 }: Props) {
+  const [isMobileView, setIsMobileView] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mq = window.matchMedia('(max-width: 640px)');
+    const setState = () => setIsMobileView(!!mq.matches);
+    setState();
+    mq.addEventListener?.('change', setState);
+    return () => mq.removeEventListener?.('change', setState);
+  }, []);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const programRef = useRef<any>(null);
   const rendererRef = useRef<any>(null);
@@ -307,6 +317,21 @@ export default function FaultyTerminal({
   useEffect(() => {
     const ctn = containerRef.current;
     if (!ctn) return;
+
+    // If mobile, don't initialize WebGL - render a static lightweight background instead
+    if (isMobileView) {
+      // ensure container is cleared
+      ctn.innerHTML = '';
+      // apply a static background that resembles the faulty terminal pattern (scanlines + tint)
+      ctn.style.background = `linear-gradient(180deg, rgba(35,17,35,1) 0%, rgba(26,13,26,1) 100%)`;
+      ctn.style.backgroundSize = 'cover';
+      ctn.style.pointerEvents = 'none';
+      // overlay subtle scanlines
+      ctn.style.backgroundImage = `linear-gradient(180deg, rgba(255,255,255,0.02) 1px, rgba(0,0,0,0) 1px), linear-gradient(180deg, rgba(35,17,35,1), rgba(26,13,26,1))`;
+      ctn.style.backgroundRepeat = 'repeat, no-repeat';
+      ctn.style.backgroundSize = '100% 4px, cover';
+      return;
+    }
 
     // detect mobile (only width-based) and apply simplified settings for mobile
     const isMobile = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 640px)').matches;

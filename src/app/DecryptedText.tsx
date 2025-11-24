@@ -29,6 +29,16 @@ export default function DecryptedText({
   const [running, setRunning] = useState(false);
   const ranOnce = useRef(false);
   const elRef = useRef<HTMLSpanElement | null>(null);
+  const [isMobileView, setIsMobileView] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mq = window.matchMedia('(max-width: 640px)');
+    const setState = () => setIsMobileView(!!mq.matches);
+    setState();
+    mq.addEventListener?.('change', setState);
+    return () => mq.removeEventListener?.('change', setState);
+  }, []);
 
   const randomChar = () => characters[Math.floor(Math.random() * characters.length)];
 
@@ -68,6 +78,12 @@ export default function DecryptedText({
   };
 
   useEffect(() => {
+    // if mobile, skip animated reveal and show final text to reduce CPU
+    if (isMobileView) {
+      setDisplay(text);
+      return;
+    }
+
     if (animateOn === 'view') {
       const obs = new IntersectionObserver(
         (entries) => {
