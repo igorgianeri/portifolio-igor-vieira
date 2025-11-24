@@ -90,6 +90,33 @@ export default function Home() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Fecha o dropdown de projetos ao clicar fora ou pressionar Escape
+  useEffect(() => {
+    const handleOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target) return;
+      const dropdown = document.querySelector('[data-projects-dropdown]');
+      const toggle = document.querySelector('[data-projects-toggle]');
+      if (dropdown && toggle && !dropdown.contains(target) && !toggle.contains(target)) {
+        setShowProjectsDropdown(false);
+      }
+    };
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowProjectsDropdown(false);
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleOutside);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('click', handleOutside);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, []);
+
   const handleProjectClick = (projectId: number) => {
     const element = document.getElementById(`project-${projectId - 1}`);
     if (element) {
@@ -102,7 +129,7 @@ export default function Home() {
     <>
       {/* NOVA NAVBAR - Recriada do zero */}
       <nav className={`fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-black/80 border-b border-purple-500/20 transition-all duration-500 ${
-        showNavbar ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+        (showNavbar || mobileMenuOpen) ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -126,104 +153,33 @@ export default function Home() {
             </div>
 
             {/* Desktop Navigation - Minimalista */}
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '32px',
-              visibility: 'visible',
-              opacity: 1
-            }}>
+            <div className="hidden md:flex items-center gap-8">
                 
                 <a href="#hero" style={{ textDecoration: 'none' }}>
-                  <div 
-                    style={{
-                      color: '#ffffff',
-                      padding: '8px 16px',
-                      fontSize: '16px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      position: 'relative'
-                    }}
-                    onMouseEnter={(e) => {
-                      const target = e.currentTarget as HTMLElement;
-                      target.style.color = '#C30F45';
-                      target.style.transform = 'translateX(4px)';
-                    }}
-                    onMouseLeave={(e) => {
-                      const target = e.currentTarget as HTMLElement;
-                      target.style.color = '#ffffff';
-                      target.style.transform = 'translateX(0px)';
-                    }}
-                  >
+                  <button className="text-white font-medium px-4 py-2 text-base" onClick={() => setMobileMenuOpen(false)}>
                     Início
-                  </div>
+                  </button>
                 </a>
 
                 <a href="#about" style={{ textDecoration: 'none' }}>
-                  <div 
-                    style={{
-                      color: '#ffffff',
-                      padding: '8px 16px',
-                      fontSize: '16px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      position: 'relative'
-                    }}
-                    onMouseEnter={(e) => {
-                      const target = e.currentTarget as HTMLElement;
-                      target.style.color = '#C30F45';
-                      target.style.transform = 'translateX(4px)';
-                    }}
-                    onMouseLeave={(e) => {
-                      const target = e.currentTarget as HTMLElement;
-                      target.style.color = '#ffffff';
-                      target.style.transform = 'translateX(0px)';
-                    }}
-                  >
+                  <button className="text-white font-medium px-4 py-2 text-base" onClick={() => setMobileMenuOpen(false)}>
                     Sobre
-                  </div>
+                  </button>
                 </a>
 
                 <div style={{ position: 'relative' }}>
-                  <div
+                  <button
+                    data-projects-toggle
                     onClick={() => setShowProjectsDropdown(!showProjectsDropdown)}
-                    style={{
-                      color: '#ffffff',
-                      padding: '8px 16px',
-                      fontSize: '16px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      position: 'relative'
-                    }}
-                    onMouseEnter={(e) => {
-                      const target = e.currentTarget as HTMLElement;
-                      target.style.color = '#C30F45';
-                      target.style.transform = 'translateX(4px)';
-                    }}
-                    onMouseLeave={(e) => {
-                      const target = e.currentTarget as HTMLElement;
-                      target.style.color = '#ffffff';
-                      target.style.transform = 'translateX(0px)';
-                    }}
+                    aria-expanded={showProjectsDropdown}
+                    className="text-white font-medium px-4 py-2 flex items-center gap-2"
                   >
                     Projetos
-                    <span style={{ 
-                      fontSize: '12px',
-                      transition: 'transform 0.3s ease',
-                      transform: showProjectsDropdown ? 'rotate(180deg)' : 'rotate(0deg)'
-                    }}>
-                      ▼
-                    </span>
-                  </div>
+                    <span className="text-xs transition-transform" style={{ transform: showProjectsDropdown ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</span>
+                  </button>
                   
                   {showProjectsDropdown && (
-                    <div style={{
+                    <div data-projects-dropdown style={{
                       position: 'absolute',
                       top: '100%',
                       left: '0',
@@ -282,29 +238,9 @@ export default function Home() {
                 </div>
 
                 <a href="#contact" style={{ textDecoration: 'none' }}>
-                  <div 
-                    style={{
-                      color: '#ffffff',
-                      padding: '8px 16px',
-                      fontSize: '16px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      position: 'relative'
-                    }}
-                    onMouseEnter={(e) => {
-                      const target = e.currentTarget as HTMLElement;
-                      target.style.color = '#C30F45';
-                      target.style.transform = 'translateX(4px)';
-                    }}
-                    onMouseLeave={(e) => {
-                      const target = e.currentTarget as HTMLElement;
-                      target.style.color = '#ffffff';
-                      target.style.transform = 'translateX(0px)';
-                    }}
-                  >
+                  <button className="text-white font-medium px-4 py-2 text-base" onClick={() => setMobileMenuOpen(false)}>
                     Contato
-                  </div>
+                  </button>
                 </a>
 
             </div>
@@ -312,9 +248,9 @@ export default function Home() {
             {/* Mobile menu button */}
             <div className="md:hidden">
               <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-              >
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="inline-flex items-center justify-center p-2 rounded-md text-[#C30F45] hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#C30F45]/30"
+                >
                 <svg
                   className="h-6 w-6"
                   stroke="currentColor"
@@ -332,70 +268,68 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Mobile Navigation Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-black/95 backdrop-blur-md border-t border-purple-500/20">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              
-              <a href="#hero" onClick={() => setMobileMenuOpen(false)}>
-                <button className="text-white hover:text-purple-300 hover:bg-white/10 block px-3 py-2 rounded-md text-base font-medium w-full text-left">
-                  Início
-                </button>
-              </a>
+        {/* Mobile Navigation Menu (animated) */}
+        <div className={`md:hidden bg-black/95 backdrop-blur-md border-t border-purple-500/20 transition-all duration-300 ease-out overflow-hidden ${mobileMenuOpen ? 'max-h-[70vh] opacity-100 py-2 pointer-events-auto' : 'max-h-0 opacity-0 py-0 pointer-events-none'}`} aria-hidden={!mobileMenuOpen}>
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            
+            <a href="#hero" onClick={() => setMobileMenuOpen(false)}>
+              <button className="text-white hover:text-purple-300 hover:bg-white/10 block px-3 py-2 rounded-md text-base font-medium w-full text-left">
+                Início
+              </button>
+            </a>
 
-              <a href="#about" onClick={() => setMobileMenuOpen(false)}>
-                <button className="text-white hover:text-purple-300 hover:bg-white/10 block px-3 py-2 rounded-md text-base font-medium w-full text-left">
-                  Sobre
-                </button>
-              </a>
+            <a href="#about" onClick={() => setMobileMenuOpen(false)}>
+              <button className="text-white hover:text-purple-300 hover:bg-white/10 block px-3 py-2 rounded-md text-base font-medium w-full text-left">
+                Sobre
+              </button>
+            </a>
 
-              <div className="px-3 py-2">
-                <button 
-                  onClick={() => setShowProjectsDropdown(!showProjectsDropdown)}
-                  className="text-white hover:text-purple-300 flex items-center justify-between w-full"
+            <div className="px-3 py-2">
+              <button 
+                onClick={() => setShowProjectsDropdown(!showProjectsDropdown)}
+                className="text-white hover:text-purple-300 flex items-center justify-between w-full"
+              >
+                <span>Projetos</span>
+                <svg 
+                  className={`w-4 h-4 transition-transform duration-200 ${showProjectsDropdown ? 'rotate-180' : ''}`}
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
                 >
-                  <span>Projetos</span>
-                  <svg 
-                    className={`w-4 h-4 transition-transform duration-200 ${showProjectsDropdown ? 'rotate-180' : ''}`}
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                
-                {showProjectsDropdown && (
-                  <div className="mt-2 space-y-1">
-                    {projects.map((project, index) => (
-                      <button
-                        key={project.id}
-                        onClick={() => {
-                          handleProjectClick(project.id);
-                          setMobileMenuOpen(false);
-                          setShowProjectsDropdown(false);
-                        }}
-                        className="text-gray-300 hover:text-purple-300 hover:bg-white/10 block px-4 py-2 rounded-md text-sm w-full text-left flex items-center space-x-2"
-                      >
-                        <span className="text-purple-400 font-bold">
-                          {String(index + 1).padStart(2, '0')}
-                        </span>
-                        <span>{project.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <a href="#contact" onClick={() => setMobileMenuOpen(false)}>
-                <button className="text-white hover:text-purple-300 hover:bg-white/10 block px-3 py-2 rounded-md text-base font-medium w-full text-left">
-                  Contato
-                </button>
-              </a>
-
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {showProjectsDropdown && (
+                <div className="mt-2 space-y-1">
+                  {projects.map((project, index) => (
+                    <button
+                      key={project.id}
+                      onClick={() => {
+                        handleProjectClick(project.id);
+                        setMobileMenuOpen(false);
+                        setShowProjectsDropdown(false);
+                      }}
+                      className="text-gray-300 hover:text-purple-300 hover:bg-white/10 block px-4 py-2 rounded-md text-sm w-full text-left flex items-center space-x-2"
+                    >
+                      <span className="text-purple-400 font-bold">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <span>{project.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
+
+            <a href="#contact" onClick={() => setMobileMenuOpen(false)}>
+              <button className="text-white hover:text-purple-300 hover:bg-white/10 block px-3 py-2 rounded-md text-base font-medium w-full text-left">
+                Contato
+              </button>
+            </a>
+
           </div>
-        )}
+        </div>
       </nav>
 
       {/* PixelBlast Background - apenas na seção hero e parte superior do about */}
@@ -508,15 +442,14 @@ function AboutSection() {
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">Sobre Mim</h2>
         </div>
         
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 md:gap-20 items-center text-center lg:text-left">
+  <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 md:gap-20 items-center text-center lg:text-left">
           <div className="space-y-6 md:space-y-8 lg:text-left text-center">
             <p className="text-white text-base md:text-lg lg:text-xl leading-relaxed px-4 md:px-0">
               Desenvolvedor focado em Desenvolvimento Web e Mobile em processo de aprendizado. 
               Por enquanto estou aprendendo programação e desenvolvimento enquanto crio alguns projetos, 
               mas meu objetivo é trabalhar na área de Segurança Cibernética, mais especificamente na área de Pentest e Forense Digital.
             </p>
-            
-            <div className="pt-4 md:pt-6">
+            <div className="pt-4 md:pt-6 hidden lg:block">
               <a href="/curriculo-igor-vieira.pdf" download="Igor_Vieira_Curriculo.pdf">
                 <button className="btn-primary text-base md:text-lg px-6 py-3 md:px-8 md:py-4">
                   Download CV
@@ -525,19 +458,29 @@ function AboutSection() {
             </div>
           </div>
           
-          <div className="flex flex-wrap justify-center gap-6 md:gap-8 items-center">
-            {technologies.map((tech, index) => (
-              <div 
-                key={tech.name} 
-                className="transition-all duration-500 hover:scale-125 hover:rotate-12"
-                style={{
-                  animation: `float ${3 + index * 0.5}s ease-in-out infinite`,
-                  animationDelay: `${index * 0.2}s`
-                }}
-              >
-                <img src={tech.icon} alt={tech.name} className="w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 object-contain" />
-              </div>
-            ))}
+          <div className="flex flex-col items-center gap-6 md:gap-8 h-full justify-center lg:justify-center">
+            <div className="flex flex-wrap justify-center gap-6 md:gap-8 items-center">
+              {technologies.map((tech, index) => (
+                <div 
+                  key={tech.name} 
+                  className="transition-all duration-500 hover:scale-125 hover:rotate-12"
+                  style={{
+                    animation: `float ${3 + index * 0.5}s ease-in-out infinite`,
+                    animationDelay: `${index * 0.2}s`
+                  }}
+                >
+                  <img src={tech.icon} alt={tech.name} className="w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 object-contain" />
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-4 md:pt-6 block lg:hidden">
+              <a href="/curriculo-igor-vieira.pdf" download="Igor_Vieira_Curriculo.pdf">
+                <button className="btn-primary text-base md:text-lg px-6 py-3 md:px-8 md:py-4">
+                  Download CV
+                </button>
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -647,13 +590,18 @@ function ProjectSections() {
           style={{ background: 'transparent' }}
         >
 
-          <div className="absolute left-4 md:left-8 lg:left-12 top-12 md:top-1/2 transform md:-translate-y-1/2 z-10">
-            <span className="text-4xl md:text-6xl lg:text-9xl font-black" style={{ color: 'rgba(195, 15, 69, 0.2)' }}>
-              {String(projectIndex + 1).padStart(2, '0')}
-            </span>
-          </div>
+          {/* Número do projeto (absolute): alinhado à esquerda e verticalmente centralizado em md+ */}
+          <span className="absolute left-4 md:left-8 lg:left-12 top-12 md:top-1/2 md:transform md:-translate-y-1/2 text-4xl md:text-6xl lg:text-9xl font-black z-10" style={{ color: 'rgba(195, 15, 69, 0.2)' }}>
+            {String(projectIndex + 1).padStart(2, '0')}
+          </span>
 
-          <div className="w-full h-full flex items-center justify-center px-4 md:px-8 relative z-10">
+          <div className="w-full h-full flex flex-col items-center justify-start px-4 md:px-8 relative z-10">
+            {/* Header: centered title on its own line */}
+            <div className="w-full relative mb-6 md:mb-10 flex items-center justify-center">
+              <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight text-center">
+                {project.title}
+              </h3>
+            </div>
             <div className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12 items-center">
               <div className="flex flex-col items-center justify-center space-y-4 md:space-y-6 lg:col-span-2 order-2 lg:order-1">
                 <div className="w-full max-w-2xl mx-auto">
@@ -737,9 +685,6 @@ function ProjectSections() {
 
               <div className="space-y-4 md:space-y-6 px-4 flex flex-col justify-center text-center lg:text-left order-1 lg:order-2">
                 <div className="space-y-3 md:space-y-4">
-                  <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight">
-                    {project.title}
-                  </h3>
                   <p className="text-gray-300 text-sm md:text-sm lg:text-base leading-relaxed">
                     {project.description}
                   </p>

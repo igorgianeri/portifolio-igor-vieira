@@ -308,8 +308,14 @@ export default function FaultyTerminal({
     const ctn = containerRef.current;
     if (!ctn) return;
 
+    // detect mobile (only width-based) and apply simplified settings for mobile
+    const isMobile = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 640px)').matches;
+
+    // effective DPR: lower on mobile to save GPU
+    const effectiveDpr = isMobile ? Math.min(dpr, 1) : dpr;
+
     // create renderer with alpha enabled so page background can show through
-    const renderer = new Renderer({ dpr, alpha: true });
+    const renderer = new Renderer({ dpr: effectiveDpr, alpha: true });
     rendererRef.current = renderer;
     const gl = renderer.gl;
 
@@ -322,7 +328,17 @@ export default function FaultyTerminal({
 
     const geometry = new Triangle(gl);
 
-    const program = new Program(gl, {
+  // choose simplified uniform values when on mobile to reduce shader work
+  const useNoiseAmp = isMobile ? Math.min(noiseAmp, 0.6) : noiseAmp;
+  const useChromatic = isMobile ? 0 : chromaticAberration;
+  const useGlitch = isMobile ? Math.min(glitchAmount, 0.6) : glitchAmount;
+  const useFlicker = isMobile ? Math.min(flickerAmount, 0.6) : flickerAmount;
+  const useDither = isMobile ? 0 : ditherValue;
+  const useCurvature = isMobile ? Math.min(curvature, 0.08) : curvature;
+  const useScanline = isMobile ? Math.min(scanlineIntensity, 0.25) : scanlineIntensity;
+  const useMouseReact = isMobile ? false : mouseReact;
+
+  const program = new Program(gl, {
       vertex: vertexShader,
       fragment: fragmentShader,
       uniforms: {
@@ -334,13 +350,13 @@ export default function FaultyTerminal({
 
         uGridMul: { value: new Float32Array(gridMul) },
         uDigitSize: { value: digitSize },
-        uScanlineIntensity: { value: scanlineIntensity },
-        uGlitchAmount: { value: glitchAmount },
-        uFlickerAmount: { value: flickerAmount },
-        uNoiseAmp: { value: noiseAmp },
-        uChromaticAberration: { value: chromaticAberration },
-        uDither: { value: ditherValue },
-        uCurvature: { value: curvature },
+    uScanlineIntensity: { value: useScanline },
+    uGlitchAmount: { value: useGlitch },
+    uFlickerAmount: { value: useFlicker },
+    uNoiseAmp: { value: useNoiseAmp },
+    uChromaticAberration: { value: useChromatic },
+    uDither: { value: useDither },
+    uCurvature: { value: useCurvature },
         uTint: { value: new Color(tintVec[0], tintVec[1], tintVec[2]) },
         // project background purple (matches rest of site)
         uBg: { value: new Color(35 / 255, 17 / 255, 35 / 255) },
@@ -348,7 +364,7 @@ export default function FaultyTerminal({
           value: new Float32Array([smoothMouseRef.current.x, smoothMouseRef.current.y])
         },
         uMouseStrength: { value: mouseStrength },
-        uUseMouse: { value: mouseReact ? 1 : 0 },
+    uUseMouse: { value: useMouseReact ? 1 : 0 },
         uPageLoadProgress: { value: pageLoadAnimation ? 0 : 1 },
         uUsePageLoadAnimation: { value: pageLoadAnimation ? 1 : 0 },
         uBrightness: { value: brightness }
@@ -372,12 +388,23 @@ export default function FaultyTerminal({
     resizeObserver.observe(ctn);
     resize();
 
+    // throttle rendering on mobile to target ~30 FPS to reduce CPU/GPU
+    const targetFPS = isMobile ? 30 : 60;
+    let lastRender = 0;
+
     const update = (t: number) => {
       rafRef.current = requestAnimationFrame(update);
 
       if (pageLoadAnimation && loadAnimationStartRef.current === 0) {
         loadAnimationStartRef.current = t;
       }
+
+      // throttle based on targetFPS
+      const now = t;
+      if (now - lastRender < (1000 / targetFPS)) {
+        return;
+      }
+      lastRender = now;
 
       if (!pause) {
         const elapsed = (t * 0.001 + timeOffsetRef.current) * timeScale;
@@ -394,7 +421,7 @@ export default function FaultyTerminal({
         program.uniforms.uPageLoadProgress.value = progress;
       }
 
-      if (mouseReact) {
+  if (useMouseReact) {
         const dampingFactor = 0.08;
         const smoothMouse = smoothMouseRef.current;
         const mouse = mouseRef.current;
